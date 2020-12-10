@@ -39,11 +39,10 @@ defmodule Aoc.Day8 do
     end)
     |> Stream.filter(fn x -> not is_nil(x) end)
     |> Enum.map(fn x ->
-      x |> IO.inspect
+      x |> IO.inspect()
     end)
 
     "Done"
-
   end
 
   def run_program(instructions, {current_line, accumulator, visited_lines}) do

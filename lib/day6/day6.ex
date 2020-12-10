@@ -46,6 +46,5 @@ defmodule Aoc.Day6 do
       end)
     end)
     |> Enum.reduce(0, fn x, acc -> x + acc end)
-
   end
 end
