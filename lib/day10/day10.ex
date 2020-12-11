@@ -8,9 +8,58 @@ defmodule Aoc.Day10 do
   end
 
   def part_2(file) do
-    :tbd
+    adapters =
+      file
+      |> parse_input()
+      |> Enum.sort()
+      |> List.insert_at(0, 0)
+
+    adapters
+    |> chain_adapter(0)
+    |> Stream.with_index()
+    |> Stream.filter(fn {diff, _i} -> diff == 3 end)
+    |> Stream.map(fn {_diff, i} -> i end)
+    |> Enum.reverse()
+    |>  Enum.reduce([adapters, []], fn index, acc ->
+
+      [head | tail] = acc
+
+      {a, b} =
+      head
+      |> Enum.split(index)
+
+      [a, b] ++ tail
+
+    end)
+    |> Enum.map(fn arr -> possible_routes(arr)  end)
+    |> Enum.reduce(1, fn x, acc -> x * acc end)
   end
 
+  def possible_routes([_]) do
+    1
+  end
+
+  def possible_routes([]) do
+    1
+  end
+
+  def possible_routes(arr) do
+      arr
+      |> Enum.count()
+      |> tribonnaci()
+  end
+
+  def tribonnaci(0) do
+    0
+  end
+
+  def tribonnaci(index) do
+    if index < 3 do
+      1
+    else
+      tribonnaci(index - 3)+ tribonnaci(index - 2) + tribonnaci(index-1)
+    end
+  end
 
   def chain_adapter([], _current_jolts) do
     []
@@ -22,34 +71,12 @@ defmodule Aoc.Day10 do
     [diff | chain_adapter(rest, next)]
   end
 
-  def two_diffs([_last], count) do
-    count
-  end
-
-  def two_diffs([next, next_1], count) do
-    if next_1 - next == 2 do
-      count + 1
-    else
-      count
-    end
-  end
-
-  def two_diffs([next | rest], count) do
-    [next_1 | [next_2 | _]] = rest
-
-    if next_1 - next == 2 or next_2 - next == 2 do
-      two_diffs(rest, count + 1)
-    else
-      two_diffs(rest, count)
-    end
-  end
 
   def one_three_diffs(file) do
     file
     |> parse_input()
     |> Enum.sort()
     |> chain_adapter(0)
-    |> IO.inspect()
     |> Enum.reduce(%{}, fn diff, acc ->
       {_, updated} =
         acc
