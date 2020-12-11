@@ -1,15 +1,12 @@
 defmodule Aoc.Day9 do
   def part_1(file, preamble_length) do
-    data =
-      parse_input(file)
+    data = parse_input(file)
 
-      {initial_preamble, rest} =
+    {initial_preamble, rest} =
       data
       |> Enum.split(preamble_length)
 
-
-    [first | remaining] = data |> Enum.to_list
-
+    [first | remaining] = data |> Enum.to_list()
 
     initial_preamble
     |> check_for_sums(rest)
@@ -28,7 +25,6 @@ defmodule Aoc.Day9 do
         acc + x
       end)
 
-
     with {:gt, false} <- {:gt, sum > target},
          {:lt, false} <- {:lt, sum < target} do
       min = range |> Enum.min()
@@ -37,8 +33,6 @@ defmodule Aoc.Day9 do
     else
       {:gt, true} ->
         [_ | range] = range
-
-
 
         find_contiguous(target, range, rest)
 
