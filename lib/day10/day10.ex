@@ -20,18 +20,16 @@ defmodule Aoc.Day10 do
     |> Stream.filter(fn {diff, _i} -> diff == 3 end)
     |> Stream.map(fn {_diff, i} -> i end)
     |> Enum.reverse()
-    |>  Enum.reduce([adapters, []], fn index, acc ->
-
+    |> Enum.reduce([adapters, []], fn index, acc ->
       [head | tail] = acc
 
       {a, b} =
-      head
-      |> Enum.split(index)
+        head
+        |> Enum.split(index)
 
       [a, b] ++ tail
-
     end)
-    |> Enum.map(fn arr -> possible_routes(arr)  end)
+    |> Enum.map(fn arr -> possible_routes(arr) end)
     |> Enum.reduce(1, fn x, acc -> x * acc end)
   end
 
@@ -44,9 +42,9 @@ defmodule Aoc.Day10 do
   end
 
   def possible_routes(arr) do
-      arr
-      |> Enum.count()
-      |> tribonnaci()
+    arr
+    |> Enum.count()
+    |> tribonnaci()
   end
 
   def tribonnaci(0) do
@@ -57,7 +55,7 @@ defmodule Aoc.Day10 do
     if index < 3 do
       1
     else
-      tribonnaci(index - 3)+ tribonnaci(index - 2) + tribonnaci(index-1)
+      tribonnaci(index - 3) + tribonnaci(index - 2) + tribonnaci(index - 1)
     end
   end
 
@@ -70,7 +68,6 @@ defmodule Aoc.Day10 do
 
     [diff | chain_adapter(rest, next)]
   end
-
 
   def one_three_diffs(file) do
     file
