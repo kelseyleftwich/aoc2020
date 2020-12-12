@@ -1,13 +1,12 @@
 defmodule Aoc.Day12 do
-
   def part_1(file) do
     instructions =
-    file
-    |> parse_input()
+      file
+      |> parse_input()
 
     {x_pos, y_pos, _facing} =
-    {0, 0, "E"}
-    |> parse_instructions(instructions)
+      {0, 0, "E"}
+      |> parse_instructions(instructions)
 
     abs(x_pos) + abs(y_pos)
   end
@@ -17,8 +16,7 @@ defmodule Aoc.Day12 do
   end
 
   def parse_instructions(position, [{direction, count} | remaining]) do
-    position =
-      get_new_position(position, {direction, count})
+    position = get_new_position(position, {direction, count})
 
     parse_instructions(position, remaining)
   end
@@ -27,34 +25,41 @@ defmodule Aoc.Day12 do
     case direction do
       "N" ->
         {x, y + count, facing}
+
       "S" ->
         {x, y - count, facing}
+
       "E" ->
         {x + count, y, facing}
+
       "W" ->
         {x - count, y, facing}
+
       "L" ->
         {x, y, facing |> get_new_orientation(count, "L")}
+
       "R" ->
         {x, y, facing |> get_new_orientation(count, "R")}
+
       "F" ->
         get_new_position({x, y, facing}, {facing, count})
     end
   end
 
-def get_new_orientation(facing, deg, "L") do
-      facing
-      |> get_degrees_for_facing()
-      |> Kernel.-(deg)
-      |> rem(360)
-      |> get_facing_for_degrees()
+  def get_new_orientation(facing, deg, "L") do
+    facing
+    |> get_degrees_for_facing()
+    |> Kernel.-(deg)
+    |> rem(360)
+    |> get_facing_for_degrees()
   end
+
   def get_new_orientation(facing, deg, "R") do
-      facing
-      |> get_degrees_for_facing()
-      |> Kernel.+(deg)
-      |> rem(360)
-      |> get_facing_for_degrees()
+    facing
+    |> get_degrees_for_facing()
+    |> Kernel.+(deg)
+    |> rem(360)
+    |> get_facing_for_degrees()
   end
 
   def get_degrees_for_facing(facing) do
@@ -73,10 +78,13 @@ def get_new_orientation(facing, deg, "L") do
     case deg do
       0 ->
         "N"
+
       90 ->
         "E"
+
       180 ->
         "S"
+
       270 ->
         "W"
     end
@@ -88,11 +96,10 @@ def get_new_orientation(facing, deg, "L") do
     |> String.split("\n")
     |> Stream.map(fn instruction ->
       {direction, count} =
-      instruction
-      |> String.split_at(1)
+        instruction
+        |> String.split_at(1)
 
-      {count, _}=
-      count |> Integer.parse()
+      {count, _} = count |> Integer.parse()
 
       {direction, count}
     end)
