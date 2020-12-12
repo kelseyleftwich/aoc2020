@@ -15,13 +15,11 @@ defmodule Aoc.Day11 do
     |> run_round(row_count, col_count)
     |> print
     |> count_occupied()
-
-
   end
+
   def count_occupied(dictionary) do
     dictionary
     |> Enum.reduce(0, fn {_, row}, acc ->
-
       row
       |> Stream.filter(fn cell -> cell == "#" end)
       |> Enum.count()
@@ -43,7 +41,6 @@ defmodule Aoc.Day11 do
           |> update_dictionary_cell({row_index, col_index}, processed_cell)
         end)
       end)
-
 
     if dictionary
        |> Map.equal?(new_dict) do
@@ -74,28 +71,28 @@ defmodule Aoc.Day11 do
       dictionary
       |> get_cell_from_dict({row_index, col_index})
 
-      case current_cell do
-        "L" ->
-          if dictionary |> occupied_surrounding_cells?({row_index, col_index}) do
-            "L"
-          else
-            "#"
-          end
+    case current_cell do
+      "L" ->
+        if dictionary |> occupied_surrounding_cells?({row_index, col_index}) do
+          "L"
+        else
+          "#"
+        end
 
-        "." ->
-          "."
+      "." ->
+        "."
 
-        "#" ->
-          if dictionary
-             |> get_surrounding_cells({row_index, col_index})
-             |> Stream.filter(fn cell -> cell == "#" end)
-             |> Enum.count()
-             |> Kernel.>(3) do
-            "L"
-          else
-            "#"
-          end
-      end
+      "#" ->
+        if dictionary
+           |> get_surrounding_cells({row_index, col_index})
+           |> Stream.filter(fn cell -> cell == "#" end)
+           |> Enum.count()
+           |> Kernel.>(4) do
+          "L"
+        else
+          "#"
+        end
+    end
   end
 
   def occupied_surrounding_cells?(dictionary, {row_index, col_index}) do
@@ -107,28 +104,63 @@ defmodule Aoc.Day11 do
   end
 
   def get_surrounding_cells(dictionary, {row_index, col_index}) do
-    [
-      # UL
-      {-1, -1},
-      # U
-      {-1, 0},
-      # UR
-      {-1, 1},
-      # D
-      {1, 0},
-      # DL
-      {1, -1},
-      # DR
-      {1, 1},
-      # L
-      {0, -1},
-      # R
-      {0, 1}
-    ]
-    |> Enum.map(fn {row_add, col_add} ->
+    cells =
+      [
+        # UL
+        {-1, -1},
+        # U
+        {-1, 0},
+        # UR
+        {-1, 1},
+        # D
+        {1, 0},
+        # DL
+        {1, -1},
+        # DR
+        {1, 1},
+        # L
+        {0, -1},
+        # R
+        {0, 1}
+      ]
+      |> Enum.map(fn {row_add, col_add} ->
+        dictionary
+        |> find_seat({row_index, col_index}, {row_add, col_add})
+      end)
+
+    cells
+  end
+
+  def find_seat(dictionary, {row_index, col_index}, {row_add, col_add}) do
+    cell =
       dictionary
       |> get_cell_from_dict({row_index + row_add, col_index + col_add})
-    end)
+
+    case cell do
+      "." ->
+        row_add = row_add |> increment
+
+        col_add = col_add |> increment
+
+        dictionary
+        |> find_seat({row_index, col_index}, {row_add, col_add})
+
+      _ ->
+        cell
+    end
+  end
+
+  def increment(shift) do
+    with {:gt, false} <- {:gt, shift > 0},
+         {:lt, false} <- {:lt, shift < 0} do
+      0
+    else
+      {:gt, true} ->
+        shift + 1
+
+      {:lt, true} ->
+        shift + -1
+    end
   end
 
   def get_cell_from_dict(_, {row_index, col_index}) when row_index < 0 or col_index < 0 do
