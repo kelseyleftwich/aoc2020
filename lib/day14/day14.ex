@@ -6,11 +6,30 @@ defmodule Aoc.Day14 do
 
     instructions
     |> write_value(%{}, initial_mask)
-    |> Enum.map(fn {_, bin_string} ->
-      {dec, _} = bin_string |> Integer.parse(2)
-      dec
+    |> IO.inspect()
+    |> Map.get(26)
+    |> List.wrap()
+    |> Enum.map(fn  bin_string ->
+      bin_string
+      |> String.graphemes()
+      |> Enum.reverse()
+      |> get_possible_values()
     end)
-    |> Enum.reduce(0, fn x, acc -> x + acc end)
+  end
+
+  def get_possible_values(["X" | tail]) do
+    [
+      [3 |> Integer.to_string() | get_possible_values(tail)],
+      [4 |> Integer.to_string() | get_possible_values(tail)]
+    ]
+  end
+
+  def get_possible_values([head | tail]) do
+    [head | get_possible_values(tail)]
+  end
+
+  def get_possible_values([]) do
+    []
   end
 
   def write_value([], memory, _) do
@@ -33,6 +52,10 @@ defmodule Aoc.Day14 do
     value
   end
 
+  def apply_mask(value, [{_index, "0"} | rest]) do
+    apply_mask(value, rest)
+  end
+
   def apply_mask(value, [{index, char} | rest]) do
     value
     |> String.graphemes()
@@ -50,16 +73,7 @@ defmodule Aoc.Day14 do
     |> Enum.reverse()
     |> Stream.with_index()
     |> Enum.reduce([], fn {elem, index}, acc ->
-      case elem do
-        "X" ->
-          acc
-
-        "0" ->
-          [{index, "0"} | acc]
-
-        "1" ->
-          [{index, "1"} | acc]
-      end
+      [{index, elem} | acc]
     end)
   end
 
